@@ -1,6 +1,7 @@
 import os
 import time
 from torch.utils.data import DataLoader
+from sklearn.metrics import precision_recall_curve, average_precision_score
 import torch
 import torchvision.transforms as transforms
 import torch.nn as nn
@@ -8,30 +9,34 @@ from torchvision.datasets import ImageFolder
 import numpy as np
 import torch.utils.data.sampler as sampler
 from alexNet.alexnet import alexnet
-import seaborn as sn
-import pandas as pd
+
 import matplotlib.pyplot as plt
 import warnings
+
 warnings.filterwarnings("ignore")
-from sklearn.metrics import precision_recall_curve, average_precision_score
+# from sklearn.metrics import precision_recall_curve, average_precision_score
 
 
-SAVE_PATH = '/home/xuzhiwen/pythonProject/right/metric/alex'
+print(torch.__version__)
+print(torch.cuda.is_available())
+SAVE_PATH = 'E:\deeplearningwork\my-CNN-coding\\alexNet\metric'
 # save_path = os.path.join(SAVE_PATH, "log-inception-ours-4.txt")
 # save_path = os.path.join(SAVE_PATH, "inception-gk-nonpre-1.txt")
 save_path = os.path.join(SAVE_PATH, "alexnet-our-2.txt")
 save_path2 = os.path.join(SAVE_PATH, "alexnet-our-mertic-2.txt")
 
-
 labellist = ['Adenocarcinoma', 'Normal', 'Squamous-Cell-Carcinoma']
+
+
 def confusion_matrix(logits, labels, conf_matrix):
-    #print(logits)
-    #preds = torch.argmax(logits, 1)
-    #labels = torch.argmax(labels, 1)
+    # print(logits)
+    # preds = torch.argmax(logits, 1)
+    # labels = torch.argmax(labels, 1)
     preds = logits
     for p, t in zip(preds, labels):
         conf_matrix[p.long(), t.long()] += 1
     return conf_matrix
+
 
 def my_print(str_log, save_path):
     if not isinstance(str_log, str):
@@ -40,8 +45,8 @@ def my_print(str_log, save_path):
         f.write(str_log + "\n")
     print(str_log)
 
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-torch.cuda.set_device(3)
 
 test_num = 443
 val_num = 294
@@ -63,9 +68,8 @@ transformation2 = transforms.Compose([transforms.Resize((256, 256)),
                                       transforms.ToTensor(),
                                       transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
-
-dataset_train = ImageFolder(r"/home/xuzhiwen/Data/train", transform=transformation1)
-dataset_test = ImageFolder(r"/home/xuzhiwen/Data/train", transform=transformation2)
+dataset_train = ImageFolder("E:\deeplearningwork\my-CNN-coding\\archive", transform=transformation1)
+dataset_test = ImageFolder("E:\deeplearningwork\my-CNN-coding\\archive", transform=transformation2)
 # dataset_train = ImageFolder(r"/home/xuzhiwen/chest-CT", transform=transformation1)
 # dataset_test = ImageFolder(r"/home/xuzhiwen/chest-CT", transform=transformation2)
 
@@ -81,12 +85,9 @@ valid_sampler = sampler.SubsetRandomSampler(valid_idx)
 print(len(train_sampler), len(valid_sampler))
 
 train_loader = torch.utils.data.DataLoader(dataset_train,
-                                           batch_size=8, shuffle=False, sampler=train_sampler)
+                                           batch_size=2, shuffle=False, sampler=train_sampler)
 test_loader = torch.utils.data.DataLoader(dataset_test,
-                                          batch_size=8, shuffle=False, sampler=valid_sampler)
-
-
-
+                                          batch_size=2, shuffle=False, sampler=valid_sampler)
 
 # model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
 model = alexnet()
@@ -222,7 +223,7 @@ for epoch in range(MAX_EPOCH):
         plt.xlim([0.0, 1.0])
         plt.title(
             'AlexNet: AP={0:0.2f}'
-                .format(average_precision_dict["micro"]))
+            .format(average_precision_dict["micro"]))
         # plt.show()
         plt.savefig("/home/xuzhiwen/pythonProject/right/metric/alex/gk-alex-pr-" + str(epoch + 1) + ".png")
 
@@ -275,9 +276,8 @@ for epoch in range(MAX_EPOCH):
         # print("total accuracy: {:.4} ".format(total_acc1))
         # metric_log += "total accuracy: {:.4} \n".format(total_acc1)
 
-
         test_log = "test [%d/%d] loss: %.3f, acc %.4f, best_acc %.4f\n" % (
-        epoch + 1, MAX_EPOCH, running_loss / step, acc / val_num, best_acc)
+            epoch + 1, MAX_EPOCH, running_loss / step, acc / val_num, best_acc)
         my_print(test_log, save_path)
         # my_print(metric_log, save_path=save_path2)
 print('Finished Training')
