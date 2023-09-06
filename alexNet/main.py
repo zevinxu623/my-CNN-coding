@@ -22,10 +22,10 @@ print(torch.cuda.is_available())
 SAVE_PATH = 'E:\deeplearningwork\my-CNN-coding\\alexNet\metric'
 # save_path = os.path.join(SAVE_PATH, "log-inception-ours-4.txt")
 # save_path = os.path.join(SAVE_PATH, "inception-gk-nonpre-1.txt")
-save_path = os.path.join(SAVE_PATH, "alexnet-our-2.txt")
-save_path2 = os.path.join(SAVE_PATH, "alexnet-our-mertic-2.txt")
+save_path = os.path.join(SAVE_PATH, "alexnet-our-" + "1" + ".txt")
+save_path2 = os.path.join(SAVE_PATH, "alexnet-our-mertic-" + "1" + ".txt")
 
-labellist = ['Adenocarcinoma', 'Normal', 'Squamous-Cell-Carcinoma']
+labellist = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
 
 def confusion_matrix(logits, labels, conf_matrix):
@@ -48,8 +48,10 @@ def my_print(str_log, save_path):
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-test_num = 443
-val_num = 294
+# test_num = 4214
+test_num = 3428
+# val_num = 2809
+val_num = 2284
 # test_num = 372
 # val_num = 247
 # RandomHorizontalFlip  按概率p=0.5水平翻转
@@ -57,19 +59,19 @@ val_num = 294
 # Normalize             mean,std
 transformation1 = transforms.Compose([transforms.Resize((256, 256)),
                                       # transforms.Grayscale(num_output_channels=1),
-                                      transforms.CenterCrop(224),
+                                      # transforms.CenterCrop(224),
                                       # transforms.CenterCrop(112),
                                       transforms.ToTensor(),
                                       transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
 transformation2 = transforms.Compose([transforms.Resize((256, 256)),
                                       # transforms.CenterCrop(112),
-                                      transforms.CenterCrop(224),
+                                      # transforms.CenterCrop(224),
                                       transforms.ToTensor(),
                                       transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
-dataset_train = ImageFolder("E:\deeplearningwork\my-CNN-coding\\archive", transform=transformation1)
-dataset_test = ImageFolder("E:\deeplearningwork\my-CNN-coding\\archive", transform=transformation2)
+dataset_train = ImageFolder("E:\dataset\\four_dataset\Training", transform=transformation1)
+dataset_test = ImageFolder("E:\dataset\\four_dataset\Training", transform=transformation2)
 # dataset_train = ImageFolder(r"/home/xuzhiwen/chest-CT", transform=transformation1)
 # dataset_test = ImageFolder(r"/home/xuzhiwen/chest-CT", transform=transformation2)
 
@@ -85,9 +87,9 @@ valid_sampler = sampler.SubsetRandomSampler(valid_idx)
 print(len(train_sampler), len(valid_sampler))
 
 train_loader = torch.utils.data.DataLoader(dataset_train,
-                                           batch_size=2, shuffle=False, sampler=train_sampler)
+                                           batch_size=4, shuffle=False, sampler=train_sampler)
 test_loader = torch.utils.data.DataLoader(dataset_test,
-                                          batch_size=2, shuffle=False, sampler=valid_sampler)
+                                          batch_size=4, shuffle=False, sampler=valid_sampler)
 
 # model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
 model = alexnet()
@@ -97,14 +99,14 @@ model.to(device)
 
 loss_function = nn.CrossEntropyLoss()
 pata = list(model.parameters())  # 查看net内的参数
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-5, weight_decay=0.96)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-7, weight_decay=0.96)
 best_acc = 0.0
 best_epoch = 0
 MAX_EPOCH = 50
-pre = [0.0, 0.0, 0.0]
-rec = [0.0, 0.0, 0.0]
-f1 = [0.0, 0.0, 0.0]
-my_print("alex 256*256 batch_size = 8 , 0.4均分  1e-5", save_path)
+pre = [0.0, 0.0, 0.0, 0.0]
+rec = [0.0, 0.0, 0.0, 0.0]
+f1 = [0.0, 0.0, 0.0, 0.0]
+my_print("alex 256*256 batch_size = 4, 0.4均分  1e-7", save_path)
 # scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=(lambda epoch: 0.8 ** (epoch//5)))
 # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, 0.9, last_epoch=-1)
 for epoch in range(MAX_EPOCH):
@@ -173,7 +175,7 @@ for epoch in range(MAX_EPOCH):
 
         score_list = []  # 存储预测得分
         label_list = []  # 存储真实标签
-        num_class = 3
+        num_class = 4
         for i, (inputs, labels) in enumerate(test_loader):
             inputs = inputs.cuda()
             labels = labels.cuda()
@@ -225,7 +227,7 @@ for epoch in range(MAX_EPOCH):
             'AlexNet: AP={0:0.2f}'
             .format(average_precision_dict["micro"]))
         # plt.show()
-        plt.savefig("/home/xuzhiwen/pythonProject/right/metric/alex/gk-alex-pr-" + str(epoch + 1) + ".png")
+        plt.savefig("E:\deeplearningwork\my-CNN-coding\\alexNet\metric\\alex\our-alex-pr-" + str(epoch + 1) + ".png")
 
         # df_cm = pd.DataFrame(conf_matrix.numpy(),
         #                      index=[i for i in list(labellist)],

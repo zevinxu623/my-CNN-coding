@@ -59,7 +59,7 @@ def inception_v3(pretrained: bool = True, progress: bool = True, **kwargs: Any) 
         model = models.inception_v3(pretrained=True)
 
         fc_features = model.fc.in_features
-        model.fc = nn.Linear(fc_features, 3)
+        model.fc = nn.Linear(fc_features, 4)
         print("使用预训练")
         if not original_aux_logits:
             model.aux_logits = False
@@ -73,7 +73,7 @@ class Inception3(nn.Module):
 
     def __init__(
         self,
-        num_classes: int = 3,
+        num_classes: int = 4,
         aux_logits: bool = False,
         transform_input: bool = False,
         inception_blocks: Optional[List[Callable[..., nn.Module]]] = None,

@@ -1,0 +1,201 @@
+alex 256*256 batch_size = 4, 0.4¾ù·Ö  1e-7
+train [0/50] loss 0.3481, acc 0.2684, best_epoch 0
+
+test [1/50] loss: 1.394, acc 0.3139, best_acc 0.3139
+
+train [1/50] loss 0.3422, acc 0.3072, best_epoch 0
+
+test [2/50] loss: 1.370, acc 0.4264, best_acc 0.4264
+
+train [2/50] loss 0.3349, acc 0.3684, best_epoch 1
+
+test [3/50] loss: 1.341, acc 0.5144, best_acc 0.5144
+
+train [3/50] loss 0.3284, acc 0.4110, best_epoch 2
+
+test [4/50] loss: 1.315, acc 0.5679, best_acc 0.5679
+
+train [4/50] loss 0.3195, acc 0.4781, best_epoch 3
+
+test [5/50] loss: 1.279, acc 0.6200, best_acc 0.6200
+
+train [5/50] loss 0.3116, acc 0.5029, best_epoch 4
+
+test [6/50] loss: 1.248, acc 0.7067, best_acc 0.7067
+
+train [6/50] loss 0.3027, acc 0.5438, best_epoch 5
+
+test [7/50] loss: 1.212, acc 0.7649, best_acc 0.7649
+
+train [7/50] loss 0.2885, acc 0.5779, best_epoch 6
+
+test [8/50] loss: 1.155, acc 0.7776, best_acc 0.7776
+
+train [8/50] loss 0.2728, acc 0.6205, best_epoch 7
+
+test [9/50] loss: 1.093, acc 0.7999, best_acc 0.7999
+
+train [9/50] loss 0.2574, acc 0.6526, best_epoch 8
+
+test [10/50] loss: 1.031, acc 0.8047, best_acc 0.8047
+
+train [10/50] loss 0.2439, acc 0.6695, best_epoch 9
+
+test [11/50] loss: 0.977, acc 0.7728, best_acc 0.8047
+
+train [11/50] loss 0.2340, acc 0.6782, best_epoch 9
+
+test [12/50] loss: 0.937, acc 0.7955, best_acc 0.8047
+
+train [12/50] loss 0.2234, acc 0.7042, best_epoch 9
+
+test [13/50] loss: 0.895, acc 0.7842, best_acc 0.8047
+
+train [13/50] loss 0.2158, acc 0.7153, best_epoch 9
+
+test [14/50] loss: 0.864, acc 0.8052, best_acc 0.8052
+
+train [14/50] loss 0.2112, acc 0.7229, best_epoch 13
+
+test [15/50] loss: 0.846, acc 0.8371, best_acc 0.8371
+
+train [15/50] loss 0.2035, acc 0.7331, best_epoch 14
+
+test [16/50] loss: 0.815, acc 0.8130, best_acc 0.8371
+
+train [16/50] loss 0.1961, acc 0.7477, best_epoch 14
+
+test [17/50] loss: 0.785, acc 0.8393, best_acc 0.8393
+
+train [17/50] loss 0.1946, acc 0.7588, best_epoch 16
+
+test [18/50] loss: 0.779, acc 0.8774, best_acc 0.8774
+
+train [18/50] loss 0.1858, acc 0.7684, best_epoch 17
+
+test [19/50] loss: 0.744, acc 0.8923, best_acc 0.8923
+
+train [19/50] loss 0.1809, acc 0.7736, best_epoch 18
+
+test [20/50] loss: 0.725, acc 0.9111, best_acc 0.9111
+
+train [20/50] loss 0.1714, acc 0.7978, best_epoch 19
+
+test [21/50] loss: 0.686, acc 0.8940, best_acc 0.9111
+
+train [21/50] loss 0.1651, acc 0.8066, best_epoch 19
+
+test [22/50] loss: 0.661, acc 0.9081, best_acc 0.9111
+
+train [22/50] loss 0.1608, acc 0.8101, best_epoch 19
+
+test [23/50] loss: 0.644, acc 0.8958, best_acc 0.9111
+
+train [23/50] loss 0.1524, acc 0.8162, best_epoch 19
+
+test [24/50] loss: 0.610, acc 0.9041, best_acc 0.9111
+
+train [24/50] loss 0.1493, acc 0.8162, best_epoch 19
+
+test [25/50] loss: 0.598, acc 0.9072, best_acc 0.9111
+
+train [25/50] loss 0.1405, acc 0.8410, best_epoch 19
+
+test [26/50] loss: 0.563, acc 0.9076, best_acc 0.9111
+
+train [26/50] loss 0.1380, acc 0.8320, best_epoch 19
+
+test [27/50] loss: 0.553, acc 0.8625, best_acc 0.9111
+
+train [27/50] loss 0.1283, acc 0.8541, best_epoch 19
+
+test [28/50] loss: 0.514, acc 0.9151, best_acc 0.9151
+
+train [28/50] loss 0.1289, acc 0.8501, best_epoch 27
+
+test [29/50] loss: 0.516, acc 0.9256, best_acc 0.9256
+
+train [29/50] loss 0.1262, acc 0.8550, best_epoch 28
+
+test [30/50] loss: 0.505, acc 0.9081, best_acc 0.9256
+
+train [30/50] loss 0.1244, acc 0.8492, best_epoch 28
+
+test [31/50] loss: 0.498, acc 0.9321, best_acc 0.9321
+
+train [31/50] loss 0.1219, acc 0.8649, best_epoch 30
+
+test [32/50] loss: 0.488, acc 0.9116, best_acc 0.9321
+
+train [32/50] loss 0.1160, acc 0.8690, best_epoch 30
+
+test [33/50] loss: 0.465, acc 0.9247, best_acc 0.9321
+
+train [33/50] loss 0.1155, acc 0.8737, best_epoch 30
+
+test [34/50] loss: 0.463, acc 0.9295, best_acc 0.9321
+
+train [34/50] loss 0.1133, acc 0.8731, best_epoch 30
+
+test [35/50] loss: 0.454, acc 0.9181, best_acc 0.9321
+
+train [35/50] loss 0.1062, acc 0.8827, best_epoch 30
+
+test [36/50] loss: 0.425, acc 0.9243, best_acc 0.9321
+
+train [36/50] loss 0.1052, acc 0.8918, best_epoch 30
+
+test [37/50] loss: 0.421, acc 0.9194, best_acc 0.9321
+
+train [37/50] loss 0.1006, acc 0.8926, best_epoch 30
+
+test [38/50] loss: 0.403, acc 0.9159, best_acc 0.9321
+
+train [38/50] loss 0.0996, acc 0.9026, best_epoch 30
+
+test [39/50] loss: 0.399, acc 0.9194, best_acc 0.9321
+
+train [39/50] loss 0.0957, acc 0.9075, best_epoch 30
+
+test [40/50] loss: 0.383, acc 0.9247, best_acc 0.9321
+
+train [40/50] loss 0.0936, acc 0.9058, best_epoch 30
+
+test [41/50] loss: 0.375, acc 0.9142, best_acc 0.9321
+
+train [41/50] loss 0.0890, acc 0.9172, best_epoch 30
+
+test [42/50] loss: 0.356, acc 0.9238, best_acc 0.9321
+
+train [42/50] loss 0.0873, acc 0.9268, best_epoch 30
+
+test [43/50] loss: 0.350, acc 0.8958, best_acc 0.9321
+
+train [43/50] loss 0.0893, acc 0.9218, best_epoch 30
+
+test [44/50] loss: 0.357, acc 0.9177, best_acc 0.9321
+
+train [44/50] loss 0.0863, acc 0.9306, best_epoch 30
+
+test [45/50] loss: 0.346, acc 0.9081, best_acc 0.9321
+
+train [45/50] loss 0.0842, acc 0.9279, best_epoch 30
+
+test [46/50] loss: 0.337, acc 0.9116, best_acc 0.9321
+
+train [46/50] loss 0.0801, acc 0.9373, best_epoch 30
+
+test [47/50] loss: 0.321, acc 0.9229, best_acc 0.9321
+
+train [47/50] loss 0.0781, acc 0.9446, best_epoch 30
+
+test [48/50] loss: 0.313, acc 0.9317, best_acc 0.9321
+
+train [48/50] loss 0.0773, acc 0.9431, best_epoch 30
+
+test [49/50] loss: 0.310, acc 0.9256, best_acc 0.9321
+
+train [49/50] loss 0.0755, acc 0.9484, best_epoch 30
+
+test [50/50] loss: 0.302, acc 0.9260, best_acc 0.9321
+

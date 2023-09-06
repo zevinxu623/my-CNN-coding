@@ -12,7 +12,7 @@ model_urls = {
 
 class AlexNet(nn.Module):
 
-    def __init__(self, num_classes=3):
+    def __init__(self, num_classes=4):
         super(AlexNet, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
@@ -55,7 +55,7 @@ def alexnet(pretrained=True, model_root=None, **kwargs):
         # model.load_state_dict(model1, strict=False)
 
         fc_features = model.classifier[6].in_features
-        model.classifier[6] = nn.Linear(fc_features, 3)
+        model.classifier[6] = nn.Linear(fc_features, 4)
         nn.Softmax(dim=1)
         print("使用预训练")
         return model

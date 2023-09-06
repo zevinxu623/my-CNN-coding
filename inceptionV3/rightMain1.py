@@ -1,6 +1,7 @@
 import os
 import time
 from torch.utils.data import DataLoader
+from sklearn.metrics import precision_recall_curve, average_precision_score
 import torch
 import torchvision.transforms as transforms
 import torch.nn as nn
@@ -8,30 +9,34 @@ from torchvision.datasets import ImageFolder
 import numpy as np
 import torch.utils.data.sampler as sampler
 from inceptionV3.inception import inception_v3
-import seaborn as sn
-import pandas as pd
+
 import matplotlib.pyplot as plt
 import warnings
+
 warnings.filterwarnings("ignore")
-from sklearn.metrics import precision_recall_curve, average_precision_score
+# from sklearn.metrics import precision_recall_curve, average_precision_score
 
 
-SAVE_PATH = '/home/xuzhiwen/pythonProject/inceptionV3/log'
+print(torch.__version__)
+
+SAVE_PATH = 'E:\deeplearningwork\my-CNN-coding\\inceptionV3\metric'
 # save_path = os.path.join(SAVE_PATH, "log-inception-ours-4.txt")
 # save_path = os.path.join(SAVE_PATH, "inception-gk-nonpre-1.txt")
-save_path = os.path.join(SAVE_PATH, "inc-ws-c-3.txt")
-save_path2 = os.path.join(SAVE_PATH, "inc-our-mertic-2.txt")
+save_path = os.path.join(SAVE_PATH, "inceptionV3-our-" + "3" + ".txt")
+save_path2 = os.path.join(SAVE_PATH, "inceptionV3-our-mertic-" + "3" + ".txt")
+
+labellist = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
 
-labellist = ['Adenocarcinoma', 'Normal', 'Squamous-Cell-Carcinoma']
 def confusion_matrix(logits, labels, conf_matrix):
-    #print(logits)
-    #preds = torch.argmax(logits, 1)
-    #labels = torch.argmax(labels, 1)
+    # print(logits)
+    # preds = torch.argmax(logits, 1)
+    # labels = torch.argmax(labels, 1)
     preds = logits
     for p, t in zip(preds, labels):
         conf_matrix[p.long(), t.long()] += 1
     return conf_matrix
+
 
 def my_print(str_log, save_path):
     if not isinstance(str_log, str):
@@ -40,49 +45,37 @@ def my_print(str_log, save_path):
         f.write(str_log + "\n")
     print(str_log)
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-torch.cuda.set_device(0)
 
-test_num = 405
-val_num = 269
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(torch.cuda.is_available())
+
+# test_num = 4214
+test_num = 3428
+# val_num = 2809
+val_num = 2284
 # test_num = 372
 # val_num = 247
-
-# test_num = 540
-# val_num = 134
-# test_num = 472
-# val_num = 202
-
-# test_num = 651
-# val_num = 434
-# test_num = 868
-# val_num = 217
-
 # RandomHorizontalFlip  按概率p=0.5水平翻转
 # RandomVerticalFlip    按概率p=0.5垂直翻转
 # Normalize             mean,std
 transformation1 = transforms.Compose([transforms.Resize((512, 512)),
                                       # transforms.Grayscale(num_output_channels=1),
-
+                                      # transforms.CenterCrop(224),
                                       # transforms.CenterCrop(112),
                                       transforms.ToTensor(),
                                       transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
 transformation2 = transforms.Compose([transforms.Resize((512, 512)),
                                       # transforms.CenterCrop(112),
-
+                                      # transforms.CenterCrop(224),
                                       transforms.ToTensor(),
                                       transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
-
-# dataset_train = ImageFolder(r"/home/xuzhiwen/Data/train", transform=transformation1)
-# dataset_test = ImageFolder(r"/home/xuzhiwen/Data/train", transform=transformation2)
+dataset_train = ImageFolder("E:\dataset\\four_dataset\Training", transform=transformation1)
+dataset_test = ImageFolder("E:\dataset\\four_dataset\Training", transform=transformation2)
 # dataset_train = ImageFolder(r"/home/xuzhiwen/chest-CT", transform=transformation1)
 # dataset_test = ImageFolder(r"/home/xuzhiwen/chest-CT", transform=transformation2)
-dataset_train = ImageFolder(r"/home/xuzhiwen/newData", transform=transformation1)
-dataset_test = ImageFolder(r"/home/xuzhiwen/newData", transform=transformation2)
-# dataset_train = ImageFolder(r"/home/xuzhiwen/combineData", transform=transformation1)
-# dataset_test = ImageFolder(r"/home/xuzhiwen/combineData", transform=transformation2)
+
 
 test_size = 0.4
 samples = len(dataset_train)
@@ -95,12 +88,9 @@ valid_sampler = sampler.SubsetRandomSampler(valid_idx)
 print(len(train_sampler), len(valid_sampler))
 
 train_loader = torch.utils.data.DataLoader(dataset_train,
-                                           batch_size=16, shuffle=False, sampler=train_sampler)
+                                           batch_size=4, shuffle=False, sampler=train_sampler)
 test_loader = torch.utils.data.DataLoader(dataset_test,
-                                          batch_size=16, shuffle=False, sampler=valid_sampler)
-
-
-
+                                          batch_size=4, shuffle=False, sampler=valid_sampler)
 
 # model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
 model = inception_v3()
@@ -110,14 +100,14 @@ model.to(device)
 
 loss_function = nn.CrossEntropyLoss()
 pata = list(model.parameters())  # 查看net内的参数
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-5, weight_decay=0.96)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-6, weight_decay=0.96)
 best_acc = 0.0
 best_epoch = 0
-MAX_EPOCH = 80
-pre = [0.0, 0.0, 0.0]
-rec = [0.0, 0.0, 0.0]
-f1 = [0.0, 0.0, 0.0]
-my_print("inc C 512*512 batch_size = 16 , 0.4均分  1e-5", save_path)
+MAX_EPOCH = 100
+pre = [0.0, 0.0, 0.0, 0.0]
+rec = [0.0, 0.0, 0.0, 0.0]
+f1 = [0.0, 0.0, 0.0, 0.0]
+my_print("alex 256*256 batch_size = 4, 0.4均分  1e-6", save_path)
 # scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=(lambda epoch: 0.8 ** (epoch//5)))
 # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, 0.9, last_epoch=-1)
 for epoch in range(MAX_EPOCH):
@@ -175,7 +165,7 @@ for epoch in range(MAX_EPOCH):
             predict_yy = predict_y
             true_yy = test_labels
             acc += (predict_y == test_labels.to(device)).sum().item()
-            conf_matrix = confusion_matrix(predict_y, test_labels, conf_matrix)
+            # conf_matrix = confusion_matrix(predict_y, test_labels, conf_matrix)
         accurate_test = acc / val_num
         if accurate_test > best_acc:
             best_acc = accurate_test
@@ -184,60 +174,62 @@ for epoch in range(MAX_EPOCH):
         print('[epoch %d] test_loss: %.3f  test_accuracy: %.3f' %
               (epoch + 1, running_loss / step, acc / val_num))
 
-        # score_list = []  # 存储预测得分
-        # label_list = []  # 存储真实标签
-        # num_class = 3
-        # for i, (inputs, labels) in enumerate(test_loader):
-        #     inputs = inputs.cuda()
-        #     labels = labels.cuda()
-        #
-        #     outputs = model(inputs)
-        #     # prob_tmp = torch.nn.Softmax(dim=1)(outputs) # (batchsize, nclass)
-        #     score_tmp = outputs  # (batchsize, nclass)
-        #
-        #     score_list.extend(score_tmp.detach().cpu().numpy())
-        #     label_list.extend(labels.cpu().numpy())
-        #
-        # score_array = np.array(score_list)
-        # # 将label转换成onehot形式
-        # label_tensor = torch.tensor(label_list)
-        # label_tensor = label_tensor.reshape((label_tensor.shape[0], 1))
-        # label_onehot = torch.zeros(label_tensor.shape[0], num_class)
-        # label_onehot.scatter_(dim=1, index=label_tensor, value=1)
-        # label_onehot = np.array(label_onehot)
-        # # print("score_array:", score_array.shape)  # (batchsize, classnum) softmax
-        # # print("label_onehot:", label_onehot.shape)  # torch.Size([batchsize, classnum]) onehot
-        #
-        # precision_dict = dict()
-        # recall_dict = dict()
-        # average_precision_dict = dict()
-        #
-        # for i in range(num_class):
-        #     precision_dict[i], recall_dict[i], _ = precision_recall_curve(label_onehot[:, i], score_array[:, i])
-        #     average_precision_dict[i] = average_precision_score(label_onehot[:, i], score_array[:, i])
-        #     print(precision_dict[i].shape, recall_dict[i].shape, average_precision_dict[i])
-        #
-        # # micro
-        # precision_dict["micro"], recall_dict["micro"], _ = precision_recall_curve(label_onehot.ravel(),
-        #                                                                           score_array.ravel())
-        # average_precision_dict["micro"] = average_precision_score(label_onehot, score_array, average="micro")
-        # print('InceptionV3: {0:0.2f}'.format(
-        #     average_precision_dict["micro"]))
-        # print("recall   ", recall_dict['micro'])
-        # print()
-        # print("precision  ", precision_dict['micro'])
-        # # 绘制所有类别平均的pr曲线
-        # plt.figure()
-        # plt.step(recall_dict['micro'], precision_dict['micro'], where='post')
-        #
-        # plt.xlabel('Recall')
-        # plt.ylabel('Precision')
-        # plt.ylim([0.0, 1.05])
-        # plt.xlim([0.0, 1.0])
-        # plt.title(
-        #     'InceptionV3: AP={0:0.2f}'
-        #         .format(average_precision_dict["micro"]))
-        # plt.savefig("/home/xuzhiwen/pythonProject/right/metric/inc/gk-inc-pr-" + str(epoch + 1) + ".png")
+        score_list = []  # 存储预测得分
+        label_list = []  # 存储真实标签
+        num_class = 4
+        for i, (inputs, labels) in enumerate(test_loader):
+            inputs = inputs.cuda()
+            labels = labels.cuda()
+
+            outputs = model(inputs)
+            # prob_tmp = torch.nn.Softmax(dim=1)(outputs) # (batchsize, nclass)
+            score_tmp = outputs  # (batchsize, nclass)
+
+            score_list.extend(score_tmp.detach().cpu().numpy())
+            label_list.extend(labels.cpu().numpy())
+
+        score_array = np.array(score_list)
+        # 将label转换成onehot形式
+        label_tensor = torch.tensor(label_list)
+        label_tensor = label_tensor.reshape((label_tensor.shape[0], 1))
+        label_onehot = torch.zeros(label_tensor.shape[0], num_class)
+        label_onehot.scatter_(dim=1, index=label_tensor, value=1)
+        label_onehot = np.array(label_onehot)
+        # print("score_array:", score_array.shape)  # (batchsize, classnum) softmax
+        # print("label_onehot:", label_onehot.shape)  # torch.Size([batchsize, classnum]) onehot
+
+        precision_dict = dict()
+        recall_dict = dict()
+        average_precision_dict = dict()
+
+        for i in range(num_class):
+            precision_dict[i], recall_dict[i], _ = precision_recall_curve(label_onehot[:, i], score_array[:, i])
+            average_precision_dict[i] = average_precision_score(label_onehot[:, i], score_array[:, i])
+            print(precision_dict[i].shape, recall_dict[i].shape, average_precision_dict[i])
+
+        # micro
+        precision_dict["micro"], recall_dict["micro"], _ = precision_recall_curve(label_onehot.ravel(),
+                                                                                  score_array.ravel())
+        average_precision_dict["micro"] = average_precision_score(label_onehot, score_array, average="micro")
+        print('AlexNet: {0:0.2f}'.format(
+            average_precision_dict["micro"]))
+        print("recall   ", recall_dict['micro'])
+        print()
+        print("precision  ", precision_dict['micro'])
+        # 绘制所有类别平均的pr曲线
+        plt.figure()
+        plt.step(recall_dict['micro'], precision_dict['micro'], where='post')
+
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.ylim([0.0, 1.05])
+        plt.xlim([0.0, 1.0])
+        plt.title(
+            'AlexNet: AP={0:0.2f}'
+            .format(average_precision_dict["micro"]))
+        # plt.show()
+        plt.savefig("E:\deeplearningwork\my-CNN-coding\\inceptionV3\metric\\inception\our-inceptionV3-pr-" + str(epoch + 1) + ".png")
+
         # df_cm = pd.DataFrame(conf_matrix.numpy(),
         #                      index=[i for i in list(labellist)],
         #                      columns=[i for i in list(labellist)]
@@ -245,7 +237,7 @@ for epoch in range(MAX_EPOCH):
         # plt.figure(figsize=(10, 7))
         # sn.heatmap(df_cm, annot=True, fmt=".1f", cmap="BuPu")
         # # plt.show()
-        # plt.savefig("/home/xuzhiwen/pythonProject/right/inc/confusion"+str(epoch+1)+".png", dpi=300)
+        # plt.savefig("/home/xuzhiwen/pythonProject/right/alex/gk-confusion"+str(epoch+1)+".png", dpi=300)
         #
         # n1 = len(conf_matrix)
         # precision = []
@@ -287,9 +279,8 @@ for epoch in range(MAX_EPOCH):
         # print("total accuracy: {:.4} ".format(total_acc1))
         # metric_log += "total accuracy: {:.4} \n".format(total_acc1)
 
-
         test_log = "test [%d/%d] loss: %.3f, acc %.4f, best_acc %.4f\n" % (
-        epoch + 1, MAX_EPOCH, running_loss / step, acc / val_num, best_acc)
+            epoch + 1, MAX_EPOCH, running_loss / step, acc / val_num, best_acc)
         my_print(test_log, save_path)
         # my_print(metric_log, save_path=save_path2)
 print('Finished Training')
