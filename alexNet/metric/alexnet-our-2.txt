@@ -1,9 +1,0 @@
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
-alex 256*256 batch_size = 8 , 0.4均分  1e-5
